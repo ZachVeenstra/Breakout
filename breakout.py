@@ -21,6 +21,7 @@ screen = pg.display.set_mode((800,600))
 clock = pg.time.Clock()
 running = True
 boxie = Brick()
+overlay = Overlay()
 while running:
 
     # Event handling
@@ -34,6 +35,7 @@ while running:
     # Redrawing
     screen.fill((255,255,255))
     boxie.draw(screen)
+    overlay.draw(screen)
     pg.display.flip()
     clock.tick(60)
 

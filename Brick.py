@@ -7,29 +7,29 @@ class Brick(pg.sprite.Sprite):
     color. The health of the brick is calculated by summing the values
     of each RGB value. Each time the brick is hit, 25 health is removed."""
 
-    __health__ = 0
-
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((200, 200))
+        self.__image = pg.Surface((200, 200))
 
 
-        r = random.randint(0,255)
-        g = random.randint(0,255)
-        b = random.randint(0,255)
+        self.__r = random.randint(0,255)
+        self.__g = random.randint(0,255)
+        self.__b = random.randint(0,255)
 
-        __health__ = r + g + b
+        self.__health = self.__r + self.__g + self.__b
 
-        self.image.fill( (r, g, b) )
-        self.rect = self.image.get_rect()
-        self.rect.x = 200
-        self.rect.y = 200
+        self.__image.fill( (self.__r, self.__g, self.__b) )
+        self.__rect = self.__image.get_rect()
+        self.__rect.x = 200
+        self.__rect.y = 200
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        screen.blit(self.__image, self.__rect)
 
     def update(self):
         pass
 
     def hit(self):
-        pass
+        self.__health = self.__health - 25
+        if self.__health <= 0:
+            self.kill()
