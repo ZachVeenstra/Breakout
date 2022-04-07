@@ -4,7 +4,7 @@ class Ball(pg.sprite.Sprite):
     """Subclass of pg.sprite.Sprite. The ball will bounce off walls, the
     paddle, and bricks."""
 
-    def __init__(self):
+    def __init__(self, game):
         """Constructor"""
         pg.sprite.Sprite.__init__(self)
         self.__image = pg.Surface((10, 10))

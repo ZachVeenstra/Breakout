@@ -39,7 +39,7 @@ class Overlay():
         screen.blit(self.__text, self.__rect)
 
 
-    def update():
+    def update(self):
         """Updates the Overlay object."""
 
 

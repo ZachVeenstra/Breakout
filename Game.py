@@ -6,7 +6,7 @@ from Overlay import Overlay
 from Paddle import Paddle
 
 class Game():
-    """Sets up the environment, all of the balls, bricks paddle, etc.,
+    """Sets up the environment, all of the balls, bricks, paddle, etc.,
     and contains the game loop.
     """
 
@@ -41,11 +41,9 @@ class Game():
 
         self.__overlay = Overlay()
 
-        self.__paddle = Paddle()
+        self.__paddle = Paddle(self)
 
         self.__overlay = Overlay()
-
-        self.__paddle = Paddle()
 
 
 
@@ -53,12 +51,12 @@ class Game():
 
     def run(self):   
 
-        self.addBall()
+        self.__addBall()
 
         # Loops through the x and y variables each brick will occupy.
         for x in range(0, int(self.__COLUMNS * self.__BRICK_WIDTH), int(self.__BRICK_WIDTH)):
             for y in range(0, int(self.__ROWS * self.__BRICK_HEIGHT), int(self.__BRICK_HEIGHT)):
-                self.addBrick(self.__BRICK_WIDTH, self.__BRICK_HEIGHT, x, y)
+                self.__addBrick(self.__BRICK_WIDTH, self.__BRICK_HEIGHT, x, y)
 
         while self.__running:
 
@@ -66,8 +64,27 @@ class Game():
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.__running = False
+                
+                # Secret key to add a ball.
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_a:
+                        self.__addBall()
+                
+            keys = pg.key.get_pressed()
+            if  keys[pg.K_LEFT]:
+                self.__paddle.moveLeft(self)
+            if  keys[pg.K_RIGHT]:
+                self.__paddle.moveRight(self)
+                
+                        
 
-            
+            # Object updating.
+            self.__paddle.update()
+            for ball in self.__balls:
+                ball.update()
+            for brick in self.__bricks:
+                brick.update()
+            self.__overlay.update()
 
             # Redrawing.
             self.__screen.fill((255,255,255))
@@ -89,15 +106,15 @@ class Game():
         # Quit the game when no longer running.    
         pg.quit()
 
-    def addBall(self):
+    def __addBall(self):
         """Adds a ball to the list of balls so that multiple
         may appear on the screen.
         """
 
-        ball = Ball()
+        ball = Ball(self)
         self.__balls.append(ball)
 
-    def addBrick(self, width, height, x, y):
+    def __addBrick(self, width, height, x, y):
         """Adds a brick to the list of bricks so that multiple may
         appear on the screen.
         """
@@ -107,3 +124,6 @@ class Game():
 
     def getWidth(self):
         return self.__SCREEN_WIDTH
+
+    def getHeight(self):
+        return self.__SCREEN_HEIGHT
