@@ -1,6 +1,7 @@
 import pygame as pg
-from Ball import Ball
 
+from pygame import mixer
+from Ball import Ball
 from Brick import Brick
 from Overlay import Overlay
 from Paddle import Paddle
@@ -45,11 +46,25 @@ class Game():
 
         self.__overlay = Overlay()
 
+        self.__groupBricks = pg.sprite.RenderPlain()
 
+        self.__groupBalls = pg.sprite.RenderPlain()
+
+        self.__collidables = pg.sprite.Group()
+
+
+        # Initializes the mixer.
+        mixer.init()
+
+        # Music by Alexander Nakarada, copyright free
+        mixer.music.load("Space Ambience.mp3")
+        mixer.music.set_volume(0.6)
 
 
 
     def run(self):   
+        # Play music indefinitely
+        mixer.music.play(-1)
 
         self.__addBall()
 
@@ -57,6 +72,8 @@ class Game():
         for x in range(0, int(self.__COLUMNS * self.__BRICK_WIDTH), int(self.__BRICK_WIDTH)):
             for y in range(0, int(self.__ROWS * self.__BRICK_HEIGHT), int(self.__BRICK_HEIGHT)):
                 self.__addBrick(self.__BRICK_WIDTH, self.__BRICK_HEIGHT, x, y)
+
+        self.__collidables.add(self.__paddle, self.__groupBricks.sprites())
 
         while self.__running:
 
@@ -91,17 +108,21 @@ class Game():
             
             self.__paddle.draw(self.__screen)
             
+            self.__groupBricks.draw(self.__screen)
 
-            for brick in self.__bricks:
-                brick.draw(self.__screen)
+            self.__groupBalls.draw(self.__screen)
 
-            for ball in self.__balls:
-                ball.draw(self.__screen)
+            # for brick in self.__bricks:
+            #     brick.draw(self.__screen)
+
+            # for ball in self.__balls:
+            #     ball.draw(self.__screen)
 
             self.__overlay.draw(self.__screen)
 
             pg.display.flip()
             self.__clock.tick(60)
+
 
         # Quit the game when no longer running.    
         pg.quit()
@@ -112,6 +133,7 @@ class Game():
         """
 
         ball = Ball(self)
+        self.__groupBalls.add(ball)
         self.__balls.append(ball)
 
     def __addBrick(self, width, height, x, y):
@@ -119,7 +141,8 @@ class Game():
         appear on the screen.
         """
 
-        brick = Brick(width, height, x, y)
+        brick = Brick(self, width, height, x, y)
+        self.__groupBricks.add(brick)
         self.__bricks.append(brick)
 
     def getWidth(self):
@@ -127,3 +150,10 @@ class Game():
 
     def getHeight(self):
         return self.__SCREEN_HEIGHT
+
+    def getCollidables(self):
+        #return self.__groupBricks
+        return self.__collidables
+
+    def getBalls(self):
+        return self.__groupBalls
