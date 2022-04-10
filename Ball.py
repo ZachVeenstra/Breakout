@@ -40,5 +40,12 @@ class Ball(pg.sprite.Sprite):
         if(self.rect.x <= 0 or self.rect.x >= self.__game.getWidth() - self.__size):
             self.__velocity["x-speed"] = self.__velocity["x-speed"] * -1
 
+        if(self.rect.y == self.__game.getHeight() + 1):
+            lives = self.__game.getOverlay().getLives()
+            self.kill()
+            if lives > 0:
+                self.__game.getOverlay().setLives(lives - 1)
+                self.__game.addBall()
+
         self.rect.x = self.rect.x + self.__velocity["x-speed"]
         self.rect.y = self.rect.y + self.__velocity["y-speed"]

@@ -31,10 +31,15 @@ class Brick(pg.sprite.Sprite):
         screen.blit(self.image, self.rect)
 
     def update(self):
-        if (pg.sprite.spritecollideany(self, self.__game.getBalls())):
-            self.hit()
+        # REDO THIS SECTION
+        if type(pg.sprite.spritecollideany(self, self.__game.getBalls())):
+            print(type(pg.sprite.spritecollideany(self, self.__game.getBalls())))
+            #pg.sprite.spritecollideany(self, self.__game.getBalls()).hit()
 
     def hit(self):
+        print("hit")
         self.__health = self.__health - 25
         if self.__health <= 0:
             self.kill()
+            score = self.__game.getOverlay().getScore() + 50
+            self.__game.getOverlay().setScore(score)

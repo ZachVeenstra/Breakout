@@ -66,7 +66,7 @@ class Game():
         # Play music indefinitely
         mixer.music.play(-1)
 
-        self.__addBall()
+        self.addBall()
 
         # Loops through the x and y variables each brick will occupy.
         for x in range(0, int(self.__COLUMNS * self.__BRICK_WIDTH), int(self.__BRICK_WIDTH)):
@@ -85,7 +85,7 @@ class Game():
                 # Secret key to add a ball.
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_a:
-                        self.__addBall()
+                        self.addBall()
                 
             keys = pg.key.get_pressed()
             if  keys[pg.K_LEFT]:
@@ -127,7 +127,7 @@ class Game():
         # Quit the game when no longer running.    
         pg.quit()
 
-    def __addBall(self):
+    def addBall(self):
         """Adds a ball to the list of balls so that multiple
         may appear on the screen.
         """
@@ -157,3 +157,6 @@ class Game():
 
     def getBalls(self):
         return self.__groupBalls
+
+    def getOverlay(self):
+        return self.__overlay
