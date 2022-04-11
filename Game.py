@@ -12,7 +12,10 @@ class Game():
     """
 
     def __init__ (self):
-        """Constructor"""
+        """Constructor creates the screen, sets the amount of bricks
+        that appear, creates a time clock, creates groups of bricks, 
+        balls, a paddle and an overlay.
+        """
         pg.init()
 
         # The screen width in height, measured by pixels.
@@ -32,28 +35,29 @@ class Game():
         self.__screen = pg.display.set_mode((self.__SCREEN_WIDTH,
                                              self.__SCREEN_HEIGHT))
 
+        # The clock determines how many updates to the screen there are
+        # per second
         self.__clock = pg.time.Clock()
 
+        # The current game state.
         self.__running = True
 
-        self.__bricks  = []
-
-        self.__balls = []
-
+        # Displays the current score and lives.
         self.__overlay = Overlay()
 
+        # The paddle.
         self.__paddle = Paddle(self)
 
-        self.__overlay = Overlay()
-
+        # These are all in groups, which allow them to more easily be
+        # drawn to the screen and provides simpler collision detection.
         self.__groupBricks = pg.sprite.RenderPlain()
 
         self.__groupBalls = pg.sprite.RenderPlain()
 
         self.__collidables = pg.sprite.Group()
 
-
-        # Initializes the mixer.
+        # Initializes the mixer which allows the background music to be
+        # played.
         mixer.init()
 
         # Music by Alexander Nakarada, copyright free
@@ -61,20 +65,28 @@ class Game():
         mixer.music.set_volume(0.6)
 
 
-
-    def run(self):   
+    def run(self):
+        """Creates all of the brick objects first, then runs the game 
+        loop. During the game loop, keyboard input is taken, moving 
+        objects are updated, objects are redrawn, and game state is
+        checked.
+        """
         # Play music indefinitely
         mixer.music.play(-1)
 
+        # This is the initial ball
         self.addBall()
 
-        # Loops through the x and y variables each brick will occupy.
+        # Loops through the x and y variables each brick will occupy and
+        # adds a brick to the specified location.
         for x in range(0, int(self.__COLUMNS * self.__BRICK_WIDTH), int(self.__BRICK_WIDTH)):
             for y in range(0, int(self.__ROWS * self.__BRICK_HEIGHT), int(self.__BRICK_HEIGHT)):
                 self.__addBrick(self.__BRICK_WIDTH, self.__BRICK_HEIGHT, x, y)
 
-        self.__collidables.add(self.__paddle, self.__groupBricks.sprites())
+        # This group specifies which objects can collide with the ball.
+        self.getCollidables().add(self.__paddle, self.__groupBricks.sprites())
 
+        # This is the game loop.
         while self.__running:
 
             # Event handling.
@@ -87,45 +99,49 @@ class Game():
                     if event.key == pg.K_a:
                         self.addBall()
                 
+            # Detects the arrow keys to move the paddle.    
             keys = pg.key.get_pressed()
             if  keys[pg.K_LEFT]:
-                self.__paddle.moveLeft(self)
+                self.getPaddle().moveLeft()
             if  keys[pg.K_RIGHT]:
-                self.__paddle.moveRight(self)
+                self.getPaddle().moveRight()
                 
-                        
 
             # Object updating.
-            self.__paddle.update()
-            for ball in self.__balls:
+            for ball in self.getBalls().sprites():
                 ball.update()
-            for brick in self.__bricks:
-                brick.update()
-            self.__overlay.update()
+
 
             # Redrawing.
             self.__screen.fill((255,255,255))
             
             self.__paddle.draw(self.__screen)
             
-            self.__groupBricks.draw(self.__screen)
+            self.getBricks().draw(self.__screen)
 
-            self.__groupBalls.draw(self.__screen)
-
-            # for brick in self.__bricks:
-            #     brick.draw(self.__screen)
-
-            # for ball in self.__balls:
-            #     ball.draw(self.__screen)
+            self.getBalls().draw(self.__screen)
 
             self.__overlay.draw(self.__screen)
 
             pg.display.flip()
+
+
+            # Updates the screen at 60 fps.
             self.__clock.tick(60)
+
+
+            # Checks for win or loss.
+            if len(self.getBricks().sprites()) == 0:
+                print ("YOU WIN!")
+                self.__running = False
+            
+            if self.getOverlay().getLives() == 0:
+                self.__running = False
 
 
         # Quit the game when no longer running.    
         pg.quit()
+
 
     def addBall(self):
         """Adds a ball to the list of balls so that multiple
@@ -133,8 +149,8 @@ class Game():
         """
 
         ball = Ball(self)
-        self.__groupBalls.add(ball)
-        self.__balls.append(ball)
+        self.getBalls().add(ball)
+
 
     def __addBrick(self, width, height, x, y):
         """Adds a brick to the list of bricks so that multiple may
@@ -143,20 +159,38 @@ class Game():
 
         brick = Brick(self, width, height, x, y)
         self.__groupBricks.add(brick)
-        self.__bricks.append(brick)
+
 
     def getWidth(self):
+        """Gets the width of the screen in pixels."""
         return self.__SCREEN_WIDTH
 
+
     def getHeight(self):
+        """Gets the height of the screen in pixels."""
         return self.__SCREEN_HEIGHT
 
+
     def getCollidables(self):
-        #return self.__groupBricks
+        """Gets the sprites that can be collided with."""
         return self.__collidables
 
+
     def getBalls(self):
+        """Gets the group of balls."""
         return self.__groupBalls
 
+
     def getOverlay(self):
+        """Gets the overlay of the lives and score."""
         return self.__overlay
+
+
+    def getBricks(self):
+        """Gets the group of bricks."""
+        return self.__groupBricks
+
+
+    def getPaddle(self):
+        """Gets the paddle."""
+        return self.__paddle

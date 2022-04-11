@@ -13,7 +13,7 @@ class Overlay():
         # Sets the font.
         self.__font = pg.font.SysFont(None, 30)
 
-        # Sets the text.
+        # Placeholder text.
         self.__text = self.__font.render("Temp", 1, (10, 10, 10))
 
         # Creates the rectangle for the sprite.
@@ -37,10 +37,6 @@ class Overlay():
 
         # Displays the text.
         screen.blit(self.__text, self.__rect)
-
-
-    def update(self):
-        """Updates the Overlay object."""
 
 
     def setLives(self, lives):

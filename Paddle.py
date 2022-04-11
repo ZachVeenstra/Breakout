@@ -6,42 +6,48 @@ class Paddle(pg.sprite.Sprite):
 
 
     def __init__(self, game):
+        """Constructor. Sets the size of the paddle, its speed, and
+        initial position.
+        """
+
         pg.sprite.Sprite.__init__(self)
 
-        self.__size = 200
+        # Measured in pixels.
+        self.__SIZE = 200
 
-        self.image = pg.Surface((self.__size, 10))
+        # Can move six pixels per frame.
+        self.__SPEED = 6
 
-        self.__speed = 6
+        # The surface is the size of the paddle wide and 10 pixels tall.
+        self.image = pg.Surface((self.__SIZE, 10))
 
+        # The game the paddle is in.
+        self.__game = game
 
-        # placeholder
+        # The Initial position of the paddle is in the center of the 
+        # bottom of the screen.
         self.rect = self.image.get_rect()
-        self.rect.x = int(game.getWidth() / 2 - self.__size / 2)
-        self.rect.y = game.getHeight() - 20
+        self.rect.x = int(self.__game.getWidth() / 2 - self.__SIZE / 2)
+        self.rect.y = self.__game.getHeight() - 20
+
 
     def draw(self, screen):
         """Draws the paddle to the screen."""
+
         screen.blit(self.image, self.rect)
 
-    def update(self):
-        pass
 
-    def moveLeft(self, game):
-        """Moves the paddle left."""
+    def moveLeft(self):
+        """Moves the paddle left if it isn't off the screen."""
 
         if self.rect.x >= 0:
-            self.rect.x = self.rect.x - self.__speed
+            self.rect.x = self.rect.x - self.__SPEED
 
-    def moveRight(self, game):
-        """Moves the paddle right."""
 
-        if self.rect.x <= game.getWidth() - self.__size:
-            self.rect.x = self.rect.x + self.__speed
+    def moveRight(self):
+        """Moves the paddle right if it isn't off the screen"""
 
-    def __isValid(self, game):
-        """Checks if a placement of the paddle is valid."""
-        return self.rect.x >= 0 and self.rect.y <= game.getWidth() - self.__size
-
+        if self.rect.x <= self.__game.getWidth() - self.__SIZE:
+            self.rect.x = self.rect.x + self.__SPEED
 
         
